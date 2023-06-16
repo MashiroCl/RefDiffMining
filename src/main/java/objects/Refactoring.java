@@ -1,6 +1,11 @@
 package objects;
 
+import refdiff.Detector;
 import refdiff.core.diff.Relationship;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize
@@ -60,13 +65,14 @@ public final class Refactoring {
 	
 
 	public Refactoring(Relationship rel) {
-		String type = rel.getType().toString();
-		// the type for MOVE CLASS & MOVE METHOD are both MOVE,
+		String type = rel.getType().name();
+		// the type for MOVE CLASS & MOVE METHOD & MOVE INTERFACE are all MOVE,
 		if(type.equals("MOVE")) {
-			if(rel.getStandardDescription().toString().equals("Method")) {
-				type = "MOVE_Method";
-			}
-			else {type = "MOVE_Class";}
+			type = "MOVE_"+rel.getNodeBefore().getType().replace("Declaration", "");
+			System.out.println(type);
+		}
+		if(type.equals("EXTRACT")) {
+			type = "EXTRACT_" + rel.getNodeBefore().getType().replace("Declaration", "");
 		}
 		this.type = type;
 		this.beforeCodeElement = rel.getNodeBefore().getLocalName();
@@ -75,8 +81,24 @@ public final class Refactoring {
 		this.afterFilePath = rel.getNodeAfter().getLocation().format().split(":")[0];
 		this.leftStartLine = rel.getNodeBefore().getLocation().getLine();
 		this.rightStartLine =  rel.getNodeAfter().getLocation().getLine();
+		
+		String localName = rel.getNodeBefore().getLocalName();
+		String nameSpace = rel.getNodeBefore().getNamespace();
+		String simpleSpace = rel.getNodeBefore().getSimpleName();
+		String type2 = rel.getNodeBefore().getType().toString();
+		System.out.println(localName+"@"+nameSpace+"@"+simpleSpace+"@"+type2);
 	}
 	
+	public static void main(String []args) throws Exception {
+		String dataRootPath = "/Users/leichen/Code/pythonProject/pythonProject/pythonProject/SCRMDetection/experiment/data";
+		String repoName = "mbassador";
+		String sha1 = "a48811455c057e7e0568f758ef8b831ac7b9f528";
+		var refs = Detector.extractRefs(dataRootPath, repoName, sha1);
+		for(Refactoring r: refs){
+			System.out.println(r.getType());
+		}
+		
+	}
 	
 	
 }
