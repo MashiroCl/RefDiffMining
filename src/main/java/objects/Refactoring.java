@@ -86,16 +86,17 @@ public final class Refactoring {
 		String nameSpace = rel.getNodeBefore().getNamespace();
 		String simpleSpace = rel.getNodeBefore().getSimpleName();
 		String type2 = rel.getNodeBefore().getType().toString();
-		System.out.println(localName+"@"+nameSpace+"@"+simpleSpace+"@"+type2);
+//		System.out.println(localName+"@"+nameSpace+"@"+simpleSpace+"@"+type2);
 	}
 	
 	public static void main(String []args) throws Exception {
 		String dataRootPath = "/Users/leichen/Code/pythonProject/pythonProject/pythonProject/SCRMDetection/experiment/data";
 		String repoName = "mbassador";
 		String sha1 = "a48811455c057e7e0568f758ef8b831ac7b9f528";
+		sha1 = "89f44544bd9d68c94c5fc84dcef167cb33b25df5";
 		var refs = Detector.extractRefs(dataRootPath, repoName, sha1);
 		for(Refactoring r: refs){
-			System.out.println(r.getType());
+			System.out.println("refactoring type:"+r.getType());
 		}
 		
 	}
